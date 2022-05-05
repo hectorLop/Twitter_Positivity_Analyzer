@@ -5,11 +5,12 @@ description = "Analyze Twitter positivity"
 authors = ["hectorLop <lopez.almazan.hector@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "3.9"
 transformers = "^4.18.0"
-scikit-learn = "1.0.2"
-torch = "1.10.0"
-pandas = "1.4.0"
+scikit-learn = "^1.0.2"
+torch = "^1.10.1"
+pandas = "^1.4.0"
+pre-commit = "^2.19.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
