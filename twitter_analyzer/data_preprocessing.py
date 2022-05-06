@@ -10,9 +10,32 @@ import numpy as np
 import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
+from torch.utils.data import TensorDataset
 from transformers.tokenization_utils import PreTrainedTokenizer
 
 MAX_TWEETS_LENGTH = 280
+
+
+def load_raw_dataset(train_file: str, test_file: str) -> pd.DataFrame:
+    """
+    Load the raw dataset.
+
+    The dataset is stored in kaggle and is divided into
+    train and test.
+
+    Args:
+        train_file (str): Training set filepath.
+        test_file (str): Test set filepath.
+
+    Returns:
+        pd.DataFrame: Total raw dataset.
+    """
+    train = pd.read_csv(train_file, encoding="ISO-8859-1")
+    test = pd.read_csv(test_file, encoding="ISO-8859-1")
+
+    df = pd.concat([train, test], axis=0)
+
+    return df
 
 
 def sentiment_to_integer(dataset: pd.DataFrame) -> pd.DataFrame:
@@ -133,3 +156,47 @@ def tokenize_splits(
     )
 
     return X_train, X_val, X_test
+
+
+def convert_to_datasets(
+    training: Tuple[torch.Tensor, np.ndarray],
+    validation: Tuple[torch.Tensor, np.ndarray],
+    testing: Tuple[torch.Tensor, np.ndarray],
+) -> Tuple[TensorDataset, TensorDataset, TensorDataset]:
+    """
+    Convert the splits into datasets.
+
+    Args:
+        training (Tuple[torch.Tensor, np.ndarray]): Tuple
+            containing the training embeddings on first
+            position and labels on the second position.
+        validation (Tuple[torch.Tensor, np.ndarray]): Tuple
+            containing the validation embeddings on first
+            position and labels on the second position.
+        testing (Tuple[torch.Tensor, np.ndarray]): Tuple
+            containing the testing embeddings on first
+            position and labels on the second position.
+
+    Returns:
+        Tuple: A tuple containing:
+            TensorDataset: Training dataset.
+            TensorDataset: Validation dataset.
+            TensorDataset: Test dataset.
+    """
+    dataset_train = TensorDataset(
+        training[0]["inputs_ids"],
+        training[0]["attention_mask"],
+        torch.tensor(training[1]),
+    )
+
+    dataset_val = TensorDataset(
+        validation[0]["inputs_ids"],
+        validation[0]["attention_mask"],
+        torch.tensor(validation[1]),
+    )
+
+    dataset_test = TensorDataset(
+        testing[0]["inputs_ids"], testing[0]["attention_mask"], torch.tensor(testing[1])
+    )
+
+    return dataset_train, dataset_val, dataset_test
