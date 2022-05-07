@@ -14,6 +14,13 @@ from torch.utils.data import TensorDataset
 from transformers.tokenization_utils import PreTrainedTokenizer
 
 MAX_TWEETS_LENGTH = 280
+LABEL_DICT = {
+    "Extremely Negative": 0,
+    "Negative": 1,
+    "Neutral": 2,
+    "Positive": 3,
+    "Extremely Positive": 4,
+}
 
 
 def load_raw_dataset(train_file: str, test_file: str) -> pd.DataFrame:
@@ -36,30 +43,6 @@ def load_raw_dataset(train_file: str, test_file: str) -> pd.DataFrame:
     df = pd.concat([train, test], axis=0)
 
     return df
-
-
-def sentiment_to_integer(dataset: pd.DataFrame) -> pd.DataFrame:
-    """
-    Convert the sentiment categories into integers.
-
-    Args:
-        dataset (pd.DataFrame): Original dataset.
-
-    Returns:
-        pd.DataFrame: Transformed dataset with the tweets'
-            sentiment represented as integers.
-    """
-    label_dict = {
-        "Extremely Negative": 0,
-        "Negative": 1,
-        "Neutral": 2,
-        "Positive": 3,
-        "Extremely Positive": 4,
-    }
-
-    dataset["Sentiment"] = dataset["Sentiment"].replace(label_dict)
-
-    return dataset
 
 
 def get_dataset_splits(
