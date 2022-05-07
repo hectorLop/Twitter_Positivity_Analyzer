@@ -4,17 +4,25 @@ Training script.
 This module allows to train a BERT model to
 classify tweets according their positivity
 """
+from argparse import ArgumentParser, Namespace
 from typing import Tuple
 
-from torch.utils.data import TensorDataset
+from torch.optim import AdamW
+from torch.utils.data import DataLoader, RandomSampler, TensorDataset
+from transformers import (
+    BertForSequenceClassification,
+    BertTokenizer,
+    get_linear_schedule_with_warmup,
+)
 from transformers.tokenization_utils import PreTrainedTokenizer
 from twitter_analizer.data_preprocessing import (
+    LABEL_DICT,
     convert_to_datasets,
     get_dataset_splits,
     load_raw_dataset,
-    sentiment_to_integer,
     tokenize_splits,
 )
+from twitter_analizer.utils import train
 
 
 def get_data(
@@ -36,7 +44,7 @@ def get_data(
             TensorDataset: Test dataset.
     """
     raw_dataset = load_raw_dataset(train_file, test_file)
-    raw_dataset = sentiment_to_integer(raw_dataset)
+    raw_dataset["Sentiment"] = raw_dataset["Sentiment"].replace(LABEL_DICT)
 
     X_train, y_train, X_val, y_val, X_test, y_test = get_dataset_splits(raw_dataset)
 
@@ -47,3 +55,71 @@ def get_data(
     )
 
     return train, val, test
+
+
+def main(args: Namespace) -> None:
+    """
+    Perform a training experiment.
+
+    Args:
+        args (Nampespace): Training hyperparameters.
+    """
+    tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
+    train_set, val_set, _ = get_data(
+        train_file=args.train_file, test_file=args.test_file, tokenizer=tokenizer
+    )
+
+    # Create dataloaders
+    dataloader_train = DataLoader(
+        train_set,
+        sampler=RandomSampler(train_set),
+        batch_size=args.batch_size,
+        num_workers=4,
+    )
+    dataloader_val = DataLoader(
+        val_set,
+        sampler=RandomSampler(val_set),
+        batch_size=args.batch_size,
+        num_workers=4,
+    )
+
+    # Create the model
+    model = BertForSequenceClassification.from_pretrained(
+        "bert-base-uncased",
+        num_labels=len(LABEL_DICT),
+        output_attentions=False,
+        output_hidden_states=False,
+    )
+
+    # Create the optimizer and the scheduler
+    optimizer = AdamW(model.parameters(), lr=args.lr, eps=1e-8)
+    scheduler = get_linear_schedule_with_warmup(
+        optimizer,
+        num_warmup_steps=args.warmup_steps,
+        num_training_steps=len(dataloader_train) * args.epochs,
+    )
+    # Train the model
+    model = train(
+        model,
+        train_loader=dataloader_train,
+        val_loader=dataloader_val,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        epochs=args.epochs,
+    )
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("--train", required=True, help="Training set filepath")
+    parser.add_argument("--test", required=True, help="Test set filepath")
+    parser.add_argument("--batch_size", type=int, default=32, help="Batch size")
+    parser.add_argument("--lr", type=float, default=1e-5, help="Learning rate")
+    parser.add_argument("--epochs", type=int, default=10, help="Training epochs")
+    parser.add_argument(
+        "--warmup_steps", type=int, default=0, help="Number of warmup steps"
+    )
+
+    args = parser.parse_args()
+
+    main(args)
