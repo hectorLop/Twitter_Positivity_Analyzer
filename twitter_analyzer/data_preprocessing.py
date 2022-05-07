@@ -167,19 +167,19 @@ def convert_to_datasets(
             TensorDataset: Test dataset.
     """
     dataset_train = TensorDataset(
-        training[0]["inputs_ids"],
+        training[0]["input_ids"],
         training[0]["attention_mask"],
         torch.tensor(training[1]),
     )
 
     dataset_val = TensorDataset(
-        validation[0]["inputs_ids"],
+        validation[0]["input_ids"],
         validation[0]["attention_mask"],
         torch.tensor(validation[1]),
     )
 
     dataset_test = TensorDataset(
-        testing[0]["inputs_ids"], testing[0]["attention_mask"], torch.tensor(testing[1])
+        testing[0]["input_ids"], testing[0]["attention_mask"], torch.tensor(testing[1])
     )
 
     return dataset_train, dataset_val, dataset_test

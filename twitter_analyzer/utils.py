@@ -8,10 +8,10 @@ from typing import List, Tuple
 
 import numpy as np
 import torch
-import tqdm
 from sklearn.metrics import accuracy_score
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 from transformers import BertForSequenceClassification
 
 
