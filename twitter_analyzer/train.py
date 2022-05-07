@@ -15,14 +15,15 @@ from transformers import (
     get_linear_schedule_with_warmup,
 )
 from transformers.tokenization_utils import PreTrainedTokenizer
-from twitter_analizer.data_preprocessing import (
+
+from twitter_analyzer.data_preprocessing import (
     LABEL_DICT,
     convert_to_datasets,
     get_dataset_splits,
     load_raw_dataset,
     tokenize_splits,
 )
-from twitter_analizer.utils import train
+from twitter_analyzer.utils import train
 
 
 def get_data(
@@ -46,7 +47,9 @@ def get_data(
     raw_dataset = load_raw_dataset(train_file, test_file)
     raw_dataset["Sentiment"] = raw_dataset["Sentiment"].replace(LABEL_DICT)
 
-    X_train, y_train, X_val, y_val, X_test, y_test = get_dataset_splits(raw_dataset)
+    (X_train, y_train), (X_val, y_val), (X_test, y_test) = get_dataset_splits(
+        raw_dataset
+    )
 
     X_train, X_val, X_test = tokenize_splits(tokenizer, X_train, X_val, X_test)
 
@@ -65,10 +68,12 @@ def main(args: Namespace) -> None:
         args (Nampespace): Training hyperparameters.
     """
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
+    print("Getting data")
     train_set, val_set, _ = get_data(
-        train_file=args.train_file, test_file=args.test_file, tokenizer=tokenizer
+        train_file=args.train, test_file=args.test, tokenizer=tokenizer
     )
 
+    print("Creating dataloaders")
     # Create dataloaders
     dataloader_train = DataLoader(
         train_set,
@@ -83,6 +88,7 @@ def main(args: Namespace) -> None:
         num_workers=4,
     )
 
+    print("Creating model")
     # Create the model
     model = BertForSequenceClassification.from_pretrained(
         "bert-base-uncased",
@@ -98,6 +104,7 @@ def main(args: Namespace) -> None:
         num_warmup_steps=args.warmup_steps,
         num_training_steps=len(dataloader_train) * args.epochs,
     )
+    print("Start training")
     # Train the model
     model = train(
         model,
