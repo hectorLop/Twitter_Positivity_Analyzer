@@ -1,4 +1,4 @@
-name: Build, Lint, Unit & Integration Test
+name: Build, Unit Test
 
 on:
   workflow_dispatch:
@@ -14,8 +14,10 @@ concurrency:
 
 jobs:
   poetry_install:
+    runs-on: ubuntu-latest
     uses: ./.github/workflows/poetry_install.yml
  
   unit_testing:
-    needs: poetry-install
+    runs-on: ubuntu-latest
+    needs: poetry_install
     uses: ./.github/workflows/unit_testing.yml
