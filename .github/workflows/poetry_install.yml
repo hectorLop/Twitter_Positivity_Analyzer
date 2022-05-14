@@ -1,0 +1,21 @@
+name: Setup the Python Environment
+
+on: workflow_call
+
+jobs:
+  setup:
+    name: setup
+    runs-on: ubuntu-latest 
+    defaults:
+      run:
+        shell: bash
+
+    defaults:
+      run:
+        shell: bash 
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment with Poetry
+        uses: ./.github/actions/setup_environment

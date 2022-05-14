@@ -1,0 +1,21 @@
+name: Build, Lint, Unit & Integration Test
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches: ['main']
+    paths-ignore: ['docs/**', '*', '!pyproject.toml']
+  
+concurrency:
+  # New commit on branch cancels running workflows of the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  poetry-install:
+    uses: ./.github/workflows/poetry-install.yml
+ 
+  unit-test:
+    needs: poetry-install
+    uses: ./.github/workflows/unit_testing.yml
