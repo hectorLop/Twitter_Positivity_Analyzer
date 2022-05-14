@@ -19,5 +19,4 @@ jobs:
  
   unit_testing:
     needs: poetry_install
-    steps:
     uses: ./.github/workflows/unit_testing.yml
