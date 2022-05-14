@@ -14,10 +14,10 @@ concurrency:
 
 jobs:
   poetry_install:
-    runs-on: ubuntu-latest
+    name: Install poetry
     uses: ./.github/workflows/poetry_install.yml
  
   unit_testing:
-    runs-on: ubuntu-latest
     needs: poetry_install
+    steps:
     uses: ./.github/workflows/unit_testing.yml
