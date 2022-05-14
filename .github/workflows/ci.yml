@@ -13,9 +13,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  poetry-install:
-    uses: ./.github/workflows/poetry-install.yml
+  poetry_install:
+    uses: ./.github/workflows/poetry_install.yml
  
-  unit-test:
+  unit_testing:
     needs: poetry-install
     uses: ./.github/workflows/unit_testing.yml

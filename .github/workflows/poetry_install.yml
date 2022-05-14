@@ -10,10 +10,6 @@ jobs:
       run:
         shell: bash
 
-    defaults:
-      run:
-        shell: bash 
-
     steps:
       - uses: actions/checkout@v2
 
