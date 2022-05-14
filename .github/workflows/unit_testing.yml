@@ -1,0 +1,23 @@
+name: Unit Test & Upload Coverage
+
+on: workflow_call
+
+jobs:
+  pytest:
+    name: pytest
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        shell: bash
+ 
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment with Poetry
+        uses: ./.github/actions/setup_environment
+
+      - name: Test
+        run: |
+          source $VENV
+          python -m pytest tests/ 
