@@ -16,7 +16,7 @@ from transformers import BertForSequenceClassification
 
 
 def evaluate(
-    dataloader: DataLoader, model: BertForSequenceClassification
+    dataloader: DataLoader, model: BertForSequenceClassification, device: str
 ) -> Tuple[float, List[int], List[int]]:
     """
     Evaluate a model's performance.
@@ -24,6 +24,7 @@ def evaluate(
     Args:
         dataloader (DataLoader): Data to evaluate the model.
         model (BertForSequenceClassification): BERT model.
+        device (str): Device to use for training.
 
     Returns:
         Tuple: A tuple containing:
@@ -38,7 +39,7 @@ def evaluate(
 
     for batch in tqdm(dataloader):
         # Put the data into the GPU
-        batch = tuple(b.to("cuda") for b in batch)
+        batch = tuple(b.to(device) for b in batch)
 
         # Create the input
         inputs = {"input_ids": batch[0], "attention_mask": batch[1], "labels": batch[2]}
@@ -74,6 +75,8 @@ def train(
     optimizer: torch.optim.Optimizer,
     scheduler: LambdaLR,
     epochs: int,
+    checkpoint: str = "models/BERT_ft_epoch",
+    device: str = "cuda",
 ) -> BertForSequenceClassification:
     """
     Train a BERT model.
@@ -85,13 +88,15 @@ def train(
         optimizer (torch.optim.Optimizer): Optimizer algorithm.
         scheduler (LambdaLR): Learning rate scheduler.
         epochs (int): Number of epochs.
+        checkpoint (str): Checkpoint path and name.
+        device (str): Device to use for training.
 
     Returns:
         BertForSequenceClassification: Trained BERT model.
     """
     for epoch in range(1, epochs + 1):
         model.train()
-        model.to("cuda")
+        model.to(device)
 
         best_val_loss = np.inf
         loss_train_total = 0
@@ -103,7 +108,7 @@ def train(
             optimizer.zero_grad()
 
             # Put the data into the GPU
-            batch = tuple(b.to("cuda") for b in batch)
+            batch = tuple(b.to(device) for b in batch)
             # Define the input
             inputs = {
                 "input_ids": batch[0],
@@ -129,7 +134,9 @@ def train(
 
             # Update parameters
             optimizer.step()
-            scheduler.step()
+
+            if scheduler:
+                scheduler.step()
 
         # Compute training accuracy
         train_preds = np.concatenate(train_preds, axis=0).argmax(1)
@@ -144,7 +151,7 @@ def train(
         tqdm.write(f"Training accuracy: {train_acc}")
 
         # Validation metrics
-        val_loss, val_preds, val_true_vals = evaluate(val_loader, model)
+        val_loss, val_preds, val_true_vals = evaluate(val_loader, model, device)
         val_acc = accuracy_score(val_true_vals, val_preds)
         tqdm.write(f"Validation loss: {val_loss}")
         tqdm.write(f"Val accuracy: {val_acc}")
@@ -152,7 +159,9 @@ def train(
         # Save checkpoint if the validation loss improves
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            torch.save(model.state_dict(), f"models/BERT_ft_epoch{epoch}.model")
+
+            if checkpoint:
+                torch.save(model.state_dict(), f"{checkpoint}{epoch}.model")
 
         gc.collect()
 

@@ -1,4 +1,5 @@
 """Pytest fixtures."""
+import pickle
 from pathlib import Path
 
 import numpy as np
@@ -6,7 +7,7 @@ import pandas as pd
 import torch
 from pytest import fixture
 
-from twitter_analyzer import DATA_DIR
+from twitter_analyzer import DATA_DIR, TESTS_DIR
 from twitter_analyzer.data_preprocessing import LABEL_DICT, get_dataset_splits
 
 
@@ -63,3 +64,12 @@ def get_subsample_tokenized():
     y_test = np.random.randint(0, 5, 12)
 
     return (X_train, y_train), (X_val, y_val), (X_test, y_test)
+
+
+@fixture
+def load_ready_training_data():
+    """Load a subsample of data ready for training."""
+    with open(Path(TESTS_DIR, "data/testing_data.pkl"), "rb") as file:
+        data = pickle.load(file)
+
+    return data["train"], data["val"]
