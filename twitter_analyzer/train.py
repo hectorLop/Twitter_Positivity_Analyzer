@@ -113,7 +113,11 @@ def main(args: Namespace) -> None:
         optimizer=optimizer,
         scheduler=scheduler,
         epochs=args.epochs,
+        checkpoint=args.checkpoint,
+        device=args.device,
     )
+
+    return model
 
 
 if __name__ == "__main__":
@@ -126,6 +130,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--warmup_steps", type=int, default=0, help="Number of warmup steps"
     )
+    parser.add_argument(
+        "--checkpoint",
+        type=str,
+        default="model/BERT_model_epoch",
+        help="Checkpoint path",
+    )
+    parser.add_argument("--device", type=str, default="cuda", help="Training device")
 
     args = parser.parse_args()
 
