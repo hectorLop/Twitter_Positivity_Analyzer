@@ -1,4 +1,4 @@
-name: Unit Test & Upload Coverage
+name: Integration test
 
 on: workflow_call
 
@@ -13,13 +13,11 @@ jobs:
  
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
-
+        
       - name: Setup environment with Poetry
         uses: ./.github/actions/setup_environment
 
       - name: Test
         run: |
           source $VENV
-          python -m pytest tests/unitary/
+          python -m pytest tests/integration/
