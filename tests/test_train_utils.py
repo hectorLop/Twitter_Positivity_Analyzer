@@ -3,6 +3,7 @@ Training module unitary testing.
 
 This module tests if the training function works.
 """
+import torch
 from torch.optim import AdamW
 from torch.utils.data import DataLoader, RandomSampler, TensorDataset
 from transformers import (
@@ -45,6 +46,11 @@ def test_train(load_ready_training_data):
     # Create the optimizer and the scheduler
     optimizer = AdamW(model.parameters(), lr=0.00001, eps=1e-8)
 
+    initial_parameters = model.parameters()
+    for param in initial_parameters:
+        init = param.data.detach().clone()
+        break
+
     print("Start training")
     # Train the model
     model = train(
@@ -57,3 +63,10 @@ def test_train(load_ready_training_data):
         checkpoint="",
         device="cpu",
     )
+
+    final_parameters = model.parameters()
+    for param in final_parameters:
+        final = param.data.detach().clone()
+        break
+
+    assert not torch.equal(init, final)
