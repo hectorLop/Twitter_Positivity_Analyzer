@@ -20,3 +20,7 @@ jobs:
   unit_testing:
     needs: poetry_install
     uses: ./.github/workflows/unit_testing.yml
+
+  integration_testing:
+    needs: poetry_install
+    uses: ./.github/workflows/integration_testing.yml
