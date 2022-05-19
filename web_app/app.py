@@ -1,36 +1,77 @@
-"""
-Gradio Twitter analizer application.
+"""Lambda function code."""
+import json
+from typing import Dict
 
-This module provides a gradio-based web application
-for the Twitter analyzer project.
-"""
-import gradio as gr
+import torch
+from transformers import BertForSequenceClassification, BertTokenizer
 
-from twitter_analyzer.scraper.tweet_scraper import retrieve_tweet_text
-from web_app.backend import predict_positivity
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
+model = BertForSequenceClassification.from_pretrained(
+    "bert-base-uncased",
+    num_labels=5,
+    output_attentions=False,
+    output_hidden_states=False,
+    local_files_only=True,
+)
+model.load_state_dict(torch.load("model_dir/BERT_ft_epoch5.model"))
+model.eval()
 
 
-def process_tweet(url: str) -> str:
+def format_response(body: Dict, status_code: int) -> Dict:
     """
-    Get a tweet's positivity.
+    Add format to the lambda response.
 
     Args:
-        url (str): Tweet's URL.
+        body (Dict): Response body.
+        status_code (int): Response status.
 
     Returns:
-        str: Predicted positivity
+        Dict: Response format.
     """
-    text = retrieve_tweet_text(url)
-    outcome = predict_positivity(text)
+    return {
+        "statusCode": str(status_code),
+        "body": json.dumps(body),
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+        },
+    }
 
-    return outcome
+
+def predict_positivity(text: str) -> str:
+    """
+    Predict the positivity of a given tweet.
+
+    Args:
+        text (str): Tweet's text.
+
+    Returns:
+        str: Predicted positivity.
+    """
+    label_dict = {
+        0: "Extremely Negative",
+        1: "Negative",
+        2: "Neutral",
+        3: "Positive",
+        4: "Extremely Positive",
+    }
+    encoded = tokenizer(text, return_tensors="pt")
+    logits = model(**encoded).logits
+
+    predicted_class_id = logits.argmax().item()
+
+    return label_dict[predicted_class_id]
 
 
-app = gr.Interface(
-    fn=process_tweet,
-    inputs=gr.inputs.Textbox(lines=2, placeholder="Tweet url..."),
-    outputs="text",
-)
+def handler(event, context):
+    """Lambda hanlder function."""
+    try:
+        text = event["text"]
 
-if __name__ == "__main__":
-    app, local_url, share_url = app.launch()
+        pred = predict_positivity(text)
+
+        payload = {"label": pred}
+
+        return format_response(payload, 200)
+    except Exception:
+        return format_response({"msg": "ERROR"}, 200)
