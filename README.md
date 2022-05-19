@@ -21,7 +21,7 @@ Currently, the application is deployed using Hugginface Spaces, accessible in th
 
 #### :red_car: Roadmap
 
-- [ ] Implement a CI pipeline
+- [X] Implement a CI pipeline
 - [ ] Implement a CD pipeline
 - [ ] Implement a CT pipeline
 - [ ] Deploy the backend on AWS Lambda
