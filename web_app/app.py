@@ -5,15 +5,13 @@ from typing import Dict
 import torch
 from transformers import BertForSequenceClassification, BertTokenizer
 
-tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", do_lower_case=True)
-model = BertForSequenceClassification.from_pretrained(
-    "bert-base-uncased",
-    num_labels=5,
-    output_attentions=False,
-    output_hidden_states=False,
-    local_files_only=True,
+tokenizer = BertTokenizer.from_pretrained(
+    "model_dir/BERT_tokenizer", do_lower_case=True
 )
-model.load_state_dict(torch.load("model_dir/BERT_ft_epoch5.model"))
+model = BertForSequenceClassification.from_pretrained(
+    "model_dir/BERT_model", local_files_only=True
+)
+# model.load_state_dict(torch.load("model_dir/BERT_model"))
 model.eval()
 
 
@@ -74,4 +72,5 @@ def handler(event, context):
 
         return format_response(payload, 200)
     except Exception:
+        print(event)
         return format_response({"msg": "ERROR"}, 200)

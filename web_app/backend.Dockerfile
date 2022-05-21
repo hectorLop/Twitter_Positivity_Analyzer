@@ -12,6 +12,7 @@ ENV PATH="${PATH}:/root/.poetry/bin"
 COPY pyproject.toml ./
 COPY poetry.lock ./
 
+RUN poetry config virtualenvs.create false
 RUN poetry install
 
 # ARG AWS_ACCESS_KEY_ID_ARG
@@ -24,10 +25,16 @@ RUN poetry install
 
 # Copy model checkpoint into Docker
 RUN mkdir model_dir
-COPY data/BERT_ft_epoch5.model ./model_dir
-
+COPY data/BERT_model ./model_dir/BERT_model
+COPY data/BERT_tokenizer ./model_dir/BERT_tokenizer
 # copy the training script inside the container
 
 COPY web_app/app.py ./ 
 
+#$# Provide a known path for the virtual environment by creating a symlink
+#$RUN ln -s $(poetry env info --path) /var/my-venv
+#$# Hide virtual env prompt
+#$ENV VIRTUAL_ENV_DISABLE_PROMPT 1
+#$# Start virtual env when bash starts
+#$RUN echo "source /var/my-venv/bin/activate" >> ~/.bashrc
 CMD ["app.handler"]

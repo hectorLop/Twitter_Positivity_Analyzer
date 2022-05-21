@@ -11,8 +11,6 @@ import gradio as gr
 
 from twitter_analyzer.scraper.tweet_scraper import retrieve_tweet_text
 
-# from web_app.backend import predict_positivity
-
 
 def process_tweet(url: str) -> str:
     """
@@ -37,19 +35,10 @@ def process_tweet(url: str) -> str:
     )
 
     response = json.loads(response["Payload"].read().decode())
-    print(response)
     response = json.loads(response["body"])
     outcome = response["label"]
 
-    label_dict = {
-        0: "Extremely Negative",
-        1: "Negative",
-        2: "Neutral",
-        3: "Positive",
-        4: "Extremely Positive",
-    }
-
-    return label_dict[outcome]
+    return outcome
 
 
 app = gr.Interface(
