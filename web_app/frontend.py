@@ -8,8 +8,7 @@ import json
 
 import boto3
 import gradio as gr
-
-from twitter_analyzer.scraper.tweet_scraper import retrieve_tweet_text
+from tweet_scraper import retrieve_tweet_text
 
 
 def process_tweet(url: str) -> str:
@@ -26,7 +25,7 @@ def process_tweet(url: str) -> str:
 
     payload = {"text": text}
 
-    session = boto3.Session(profile_name="twitter")
+    session = boto3.Session()
     lambda_client = session.client("lambda")
     response = lambda_client.invoke(
         FunctionName="twitter-analyzer-lambda",
@@ -48,4 +47,4 @@ app = gr.Interface(
 )
 
 if __name__ == "__main__":
-    app, local_url, share_url = app.launch()
+    app, local_url, share_url = app.launch(server_port=8500, server_name="0.0.0.0")
