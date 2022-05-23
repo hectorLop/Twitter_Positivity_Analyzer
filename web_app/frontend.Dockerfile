@@ -17,8 +17,8 @@ ENV AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION_ARG
 
 # copy the scripts inside the container
 COPY web_app/frontend.py ./
-COPY twitter_analyzer ./
+COPY twitter_analyzer/scraper/tweet_scraper.py ./tweet_scraper.py
 
 EXPOSE 8500
 
-ENTRYPOINT ["python3","-m", "frontend"]
+ENTRYPOINT ["python3", "frontend.py"]
