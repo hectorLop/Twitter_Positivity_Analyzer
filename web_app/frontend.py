@@ -55,7 +55,7 @@ The positivity is measured in five categories:
 - Positive
 - Extremely positive
 
-The application is based on a BERT model fine tuned on the following
+The application is based on a BERT model fine tuned on the following:
 [dataset](https://www.kaggle.com/datasets/datatattle/covid-19-nlp-text-classification).
 """
 
