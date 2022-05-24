@@ -3,7 +3,7 @@ name: Deploy the Gradio application
 on: workflow_call
 
 jobs:
-  backend_deployment:
+  frontend_deployment:
     name: Frontend deploy
     runs-on: ubuntu-latest
     
