@@ -12,11 +12,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-jobs:
-  poetry_install:
-    name: Install poetry
-    uses: ./.github/workflows/poetry_install.yml
-
+jobs: 
   continuous_integration:
     name: Continuous Integration Pipeline
     uses: ./.github/workflows/ci.yml
