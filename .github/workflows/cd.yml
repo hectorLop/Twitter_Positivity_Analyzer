@@ -1,0 +1,31 @@
+name: Continuous Deployment Pipeline
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches: ['main']
+    paths-ignore: ['docs/**', '*', '!pyproject.toml']
+    paths: ['web_app/**', 'twitter_analyzer/**']
+  
+concurrency:
+  # New commit on branch cancels running workflows of the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  poetry_install:
+    name: Install poetry
+    uses: ./.github/workflows/poetry_install.yml
+
+  continuous_integration:
+    name: Continuous Integration Pipeline
+    uses: ./.github/workflows/ci.yml
+
+  backend_deployment:
+    name: Backend Deployment
+    uses: ./.github/workflows/backend_deployment.yml
+
+  frontend_deployment:
+    name: Frontend Deployment
+    uses: ./.github/workflows/frontend_deployment.yml

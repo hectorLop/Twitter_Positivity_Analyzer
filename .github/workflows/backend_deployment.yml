@@ -1,0 +1,52 @@
+name: Deploy the lambda function
+
+on: workflow_call
+
+jobs:
+  backend_deployment:
+    name: Backend deploy
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        shell: bash
+ 
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - name: Setup environment with Poetry
+        uses: ./.github/actions/setup_environment
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-backend-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: twitter-positivity-analyzer
+          IMAGE_TAG: latest
+        run: |
+          docker build -f web_app/backend.Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG  .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Update Lambda function with latest ECR image
+        env:
+          LAMBDA_NAME: twitter-analyzer-lambda
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: twitter-positivity-analyzer
+          IMAGE_TAG: latest
+        run: |
+          aws lambda update-function-code \
+          --function-name $LAMBDA_NAME \
+          --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
