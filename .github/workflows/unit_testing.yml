@@ -21,7 +21,7 @@ jobs:
 
       - name: Test
         env: 
-          GDRIVE_CREDENTIALS_DATA: '${{ secrets.GDRIVE_CREDENTIALS_DATA }}''
+          GDRIVE_CREDENTIALS_DATA: '${{ secrets.GDRIVE_CREDENTIALS_DATA }}'
         run: |
           source $VENV
           dvc pull
