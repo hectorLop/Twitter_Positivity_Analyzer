@@ -22,7 +22,7 @@ Currently, the application is deployed using Hugginface Spaces, accessible in th
 #### :red_car: Roadmap
 
 - [X] Implement a CI pipeline
-- [ ] Implement a CD pipeline
+- [X] Implement a CD pipeline
 - [ ] Implement a CT pipeline
 - [X] Deploy the backend on AWS Lambda
 - [X] Deploy the gradio app on an EC2 instance
