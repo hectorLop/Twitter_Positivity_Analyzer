@@ -27,6 +27,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      
+      - name: Setup environment with Poetry
+        uses: ./.github/actions/setup_environment
+
+      - name: Download checkpoints
+        env:
+          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
+        uses: |
+          source $VENV
+          dvc pull
               
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
