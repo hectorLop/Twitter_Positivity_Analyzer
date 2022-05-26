@@ -18,6 +18,8 @@ jobs:
  
   unit_testing:
     needs: poetry_install
+    env: 
+      GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
     uses: ./.github/workflows/unit_testing.yml
 
   integration_testing:
@@ -27,9 +29,20 @@ jobs:
   backend_deployment:
     needs: integration_testing
     name: Backend Deployment
+    env: 
+      GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
     uses: ./.github/workflows/backend_deployment.yml
 
   frontend_deployment:
     needs: integration_testing
     name: Frontend Deployment
+    env: 
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
     uses: ./.github/workflows/frontend_deployment.yml

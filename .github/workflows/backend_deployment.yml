@@ -1,6 +1,20 @@
 name: Deploy the lambda function
 
-on: workflow_call
+on: 
+  workflow_call:
+    secrets:
+        GDRIVE_CREDENTIALS_DATA:
+          description: 'Credentials to download the necessary data'
+          required: true
+        AWS_ACCESS_KEY_ID:
+          description: 'AWS access key'
+          required: true
+        AWS_SECRET_ACCESS_KEY:
+          description: 'AWS secret access key'
+          required: true
+        AWS_REGION:
+          description: 'AWS region'
+          required: true
 
 jobs:
   backend_deployment:
