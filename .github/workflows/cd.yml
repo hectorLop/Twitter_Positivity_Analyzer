@@ -1,13 +1,10 @@
 name: Continuous Deployment Pipeline
 
 on:
-  push:
-    branches:
-      - 'main'
-    paths: 
-      - 'web_app/**', 
-      - 'twitter_analyzer/**'
   workflow_dispatch:
+  push:
+    branches: ['main']
+    paths: ['web_app/**', 'twitter_analyzer/**']
   
 concurrency:
   # New commit on branch cancels running workflows of the same branch
