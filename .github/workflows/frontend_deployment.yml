@@ -12,6 +12,9 @@ on:
         AWS_REGION:
           description: 'AWS region'
           required: true
+        ECR_REGISTRY:
+          description: 'Frontend ECR registry'
+          required: true
 
 jobs:
   frontend_deployment:
@@ -36,7 +39,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         id: build-frontend-image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           ECR_REPOSITORY: twitter-frontend
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -48,6 +51,7 @@ jobs:
               --build-arg AWS_SECRET_ACCESS_KEY_ARG=$AWS_SECRET_ACCESS_KEY \
               --build-arg AWS_DEFAULT_REGION_ARG=$AWS_REGION .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Download task definition
         run: |
@@ -57,7 +61,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@97587c9d45a4930bf0e3da8dd2feb2a463cf4a3a
         with:
-          task-definition: frontend_task_definition.json
+          task-definition: task-definition.json 
           container-name: frontend
           image: ${{ steps.build-frontend-image.outputs.image }}
 
