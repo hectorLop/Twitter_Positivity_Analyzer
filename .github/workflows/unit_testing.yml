@@ -20,6 +20,9 @@ jobs:
         uses: ./.github/actions/setup_environment
 
       - name: Test
+        env: 
+          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
         run: |
           source $VENV
+          dvc pull
           python -m pytest tests/unitary/
