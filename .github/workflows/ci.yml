@@ -5,11 +5,7 @@ on:
   workflow_call:
   push:
     branches: ['main']
-    paths-ignore: ['docs/**', '*', '!pyproject.toml']
-  secrets:
-    GDRIVE_CREDENTIALS_DATA:
-      description: 'Credentials to download the necessary data'
-      required: true
+    paths-ignore: ['docs/**', '*', '!pyproject.toml'] 
   
 concurrency:
   # New commit on branch cancels running workflows of the same branch
@@ -23,6 +19,8 @@ jobs:
  
   unit_testing:
     needs: poetry_install
+    secrets:
+      GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
     uses: ./.github/workflows/unit_testing.yml
 
   integration_testing:

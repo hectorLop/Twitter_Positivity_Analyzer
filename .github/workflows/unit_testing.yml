@@ -1,6 +1,11 @@
 name: Unit Test & Upload Coverage
 
-on: workflow_call
+on: 
+  workflow_call:
+    secrets:
+        GDRIVE_CREDENTIALS_DATA:
+          description: 'Credentials to download the necessary data'
+          required: true
 
 jobs:
   pytest:
@@ -21,7 +26,7 @@ jobs:
 
       - name: Test
         env: 
-          GDRIVE_CREDENTIALS_DATA: '${{ secrets.GDRIVE_CREDENTIALS_DATA }}'
+          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
         run: |
           source $VENV
           dvc pull
