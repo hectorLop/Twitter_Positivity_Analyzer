@@ -5,11 +5,7 @@ on: workflow_call
 jobs:
   frontend_deployment:
     name: Frontend deploy
-    runs-on: ubuntu-latest
-    
-    defaults:
-      run:
-        shell: bash
+    runs-on: ubuntu-latest 
  
     steps:
       - name: Checkout
