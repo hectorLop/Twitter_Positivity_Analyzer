@@ -24,6 +24,11 @@ Currently, the application is deployed using Hugginface Spaces, accessible in th
 - [X] Implement a CI pipeline
 - [ ] Implement a CD pipeline
 - [ ] Implement a CT pipeline
+<<<<<<< HEAD
 - [X] Deploy the backend on AWS Lambda
 - [X] Deploy the gradio app on an EC2 instance
+=======
+- [ ] Deploy the backend on AWS Lambda
+- [ ] Deploy the gradio app on an EC2 instance
+>>>>>>> 3b0e25e32886a30155a2c39aa0405b3dbb11c9e7
 - [ ] Implement a monitoring solution to detect data drift
