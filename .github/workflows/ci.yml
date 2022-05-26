@@ -6,6 +6,10 @@ on:
   push:
     branches: ['main']
     paths-ignore: ['docs/**', '*', '!pyproject.toml']
+  secrets:
+    GDRIVE_CREDENTIALS_DATA:
+      description: 'Credentials to download the necessary data'
+      required: true
   
 concurrency:
   # New commit on branch cancels running workflows of the same branch
