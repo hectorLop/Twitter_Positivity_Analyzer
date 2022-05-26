@@ -1,0 +1,5 @@
+outs:
+- md5: bf0806cfe59c34a78f1c8ed6f3b7822b.dir
+  size: 231989
+  nfiles: 3
+  path: BERT_tokenizer

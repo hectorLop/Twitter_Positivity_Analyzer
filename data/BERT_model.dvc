@@ -1,0 +1,5 @@
+outs:
+- md5: 9528c88f762b94b0f34e5db62f76a624.dir
+  size: 438013433
+  nfiles: 2
+  path: BERT_model
