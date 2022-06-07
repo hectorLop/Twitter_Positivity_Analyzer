@@ -21,7 +21,7 @@ Currently, the application is deployed using AWS, accessible in this [URL](https
 
 The following diagram represents the CD pipeline, which is currently hosted in GitHub Actions.
 
-![CD pipeline](docs/CD pipeline.png)
+![CD_pipeline](docs/CD_pipeline.png)
 
 On the other hand, the following diagram represents an usual inference workflow. The user writes the tweet's url into the  Gradio frontend, the tweet's text is scrapped and the lambda function invoked.
 
