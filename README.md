@@ -13,11 +13,11 @@ The application uses a pre-trained BERT model fine tuned using the [Coronavirus 
 - Positive
 - Extremely positive
 
-Currently, the application is deployed using AWS, accessible in this [URL](https://huggingface.co/spaces/hlopez/Twitter-Positivity-Analyzer).
+Currently, the application is deployed using AWS, accessible in this [URL](http://ec2-54-217-182-196.eu-west-1.compute.amazonaws.com:8500/).
 
 <img src="docs/hfspaces.png" alt="hfspaces" style="zoom:67%;" />
 
-## Deployment
+## 🎥 Deployment
 
 The following diagram represents the CD pipeline, which is currently hosted in GitHub Actions.
 
