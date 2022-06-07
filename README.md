@@ -13,9 +13,19 @@ The application uses a pre-trained BERT model fine tuned using the [Coronavirus 
 - Positive
 - Extremely positive
 
-Currently, the application is deployed using Hugginface Spaces, accessible in this [URL](https://huggingface.co/spaces/hlopez/Twitter-Positivity-Analyzer).
+Currently, the application is deployed using AWS, accessible in this [URL](https://huggingface.co/spaces/hlopez/Twitter-Positivity-Analyzer).
 
 <img src="docs/hfspaces.png" alt="hfspaces" style="zoom:67%;" />
+
+## Deployment
+
+The following diagram represents the CD pipeline, which is currently hosted in GitHub Actions.
+
+![CD pipeline](docs/CD pipeline.png)
+
+On the other hand, the following diagram represents an usual inference workflow. The user writes the tweet's url into the  Gradio frontend, the tweet's text is scrapped and the lambda function invoked.
+
+<img src="docs/Inference.png" alt="Inference" style="zoom:67%;" />
 
 
 
